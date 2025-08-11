@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS Entry Form</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --shadow-soft: 0 10px 40px rgba(0,0,0,0.1);
+            --shadow-hover: 0 20px 60px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero {
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" fill-opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" fill-opacity="0.1"/><circle cx="75" cy="25" r="1" fill="white" fill-opacity="0.1"/><circle cx="25" cy="75" r="1" fill="white" fill-opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            margin: -50px auto 0;
+            position: relative;
+            z-index: 10;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: var(--primary-gradient);
+            color: white;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        .form-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid rgba(255,255,255,0.1);
+        }
+
+        .form-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .field {
+            margin-bottom: 1.5rem;
+        }
+
+        .custom-select {
+            position: relative;
+        }
+
+        .custom-select select {
+            border-radius: var(--border-radius);
+            border: 2px solid #e1e5e9;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .custom-select select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input, .textarea {
+            border-radius: var(--border-radius);
+            border: 2px solid #e1e5e9;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .input:focus, .textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button {
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button.is-primary {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+        }
+
+        .button.is-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .button.is-success {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+        }
+
+        .button.is-danger {
+            background: var(--danger-gradient);
+            border: none;
+            color: white;
+        }
+
+        .notification {
+            border-radius: var(--border-radius);
+            border: none;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            margin-top: 2rem;
+            padding: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .hero-body {
+                padding: 1.5rem;
+            }
+            
+            .form-container {
+                margin: -30px 1rem 0;
+            }
+            
+            .form-body {
+                padding: 1.5rem 1rem;
+            }
+            
+            .button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .title.is-1 {
+                font-size: 2rem !important;
+            }
+            
+            .subtitle.is-4 {
+                font-size: 1.1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .title.is-1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .field {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .form-container {
+                box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            }
+        }
+
+        /* Accessibility improvements */
+        .button:focus, .input:focus, .select:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="has-text-centered">
+            <div class="spinner"></div>
+            <p class="has-text-white mt-4" id="loadingText">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero is-primary is-medium">
+        <div class="hero-body">
+            <div class="container has-text-centered hero-content">
+                <h1 class="title is-1 has-text-weight-bold">
+                    <i class="fas fa-warehouse mr-3"></i>
+                    IMS Entry Form
+                </h1>
+                <p class="subtitle is-4">
+                    Inventory Management System
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            <!-- Form Container -->
+            <div class="form-container">
+                <div class="form-header">
+                    <h2 class="title is-3 has-text-white mb-2">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        New Entry
+                    </h2>
+                    <p class="has-text-white-ter">Fill in the details below</p>
+                </div>
+
+                <div class="form-body">
+                    <!-- Alert Messages -->
+                    <div id="alertContainer"></div>
+
+                    <!-- Entry Form -->
+                    <form id="entryForm">
+                        <!-- SKU Selection -->
+                        <div class="field">
+                            <label class="label has-text-weight-semibold">
+                                <i class="fas fa-barcode mr-2"></i>
+                                SKU (Stock Keeping Unit)
+                            </label>
+                            <div class="control">
+                                <div class="custom-select">
+                                    <div class="select is-fullwidth">
+                                        <select id="skuSelect" required>
+                                            <option value="">Loading SKUs...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction Type -->
+                        <div class="field">
+                            <label class="label has-text-weight-semibold">
+                                <i class="fas fa-exchange-alt mr-2"></i>
+                                Transaction Type
+                            </label>
+                            <div class="control">
+                                <div class="custom-select">
+                                    <div class="select is-fullwidth">
+                                        <select id="transactionType" required>
+                                            <option value="">Select transaction type</option>
+                                            <option value="In">
+                                                <i class="fas fa-arrow-down"></i> Stock In
+                                            </option>
+                                            <option value="Out">
+                                                <i class="fas fa-arrow-up"></i> Stock Out
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="field">
+                            <label class="label has-text-weight-semibold">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                Date
+                            </label>
+                            <div class="control">
+                                <input class="input" type="date" id="entryDate" required>
+                            </div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="field">
+                            <label class="label has-text-weight-semibold">
+                                <i class="fas fa-hashtag mr-2"></i>
+                                Quantity
+                            </label>
+                            <div class="control">
+                                <input class="input" type="number" id="quantity" 
+                                       placeholder="Enter quantity" 
+                                       min="1" step="1" required>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-primary is-fullwidth is-medium" 
+                                        type="submit" id="submitBtn">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Submit Entry
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-light is-fullwidth" 
+                                        type="button" id="resetBtn">
+                                    <i class="fas fa-undo mr-2"></i>
+                                    Reset Form
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="stats-container" id="statsContainer" style="display: none;">
+                <h3 class="title is-5 has-text-centered mb-4">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Form Statistics
+                </h3>
+                <div id="statsContent"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Configuration - Replace with your Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmVzSTZbmtrMdxE5WjXEiRimv7P0gpRRx2F3XzVkHI_mRtvHu9IXpiK_ve7kZtG1k2/exec';
+
+        class IMSEntryForm {
+            constructor() {
+                this.form = document.getElementById('entryForm');
+                this.skuSelect = document.getElementById('skuSelect');
+                this.alertContainer = document.getElementById('alertContainer');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                this.loadingText = document.getElementById('loadingText');
+                
+                this.initializeForm();
+                this.bindEvents();
+                this.loadSKUs();
+                this.setDefaultDate();
+                this.loadStats();
+            }
+
+            initializeForm() {
+                // Set up form validation
+                this.form.setAttribute('novalidate', true);
+            }
+
+            bindEvents() {
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetForm());
+                
+                // Add input validation feedback
+                const inputs = this.form.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    input.addEventListener('blur', () => this.validateField(input));
+                    input.addEventListener('input', () => this.clearFieldError(input));
+                });
+            }
+
+            showLoading(message = 'Loading...') {
+                this.loadingText.textContent = message;
+                this.loadingOverlay.classList.add('is-active');
+            }
+
+            hideLoading() {
+                this.loadingOverlay.classList.remove('is-active');
+            }
+
+            showAlert(message, type = 'info') {
+                const alertTypes = {
+                    'success': 'is-success',
+                    'error': 'is-danger',
+                    'warning': 'is-warning',
+                    'info': 'is-info'
+                };
+
+                const icons = {
+                    'success': 'fa-check-circle',
+                    'error': 'fa-exclamation-triangle',
+                    'warning': 'fa-exclamation-circle',
+                    'info': 'fa-info-circle'
+                };
+
+                const alert = document.createElement('div');
+                alert.className = `notification ${alertTypes[type] || 'is-info'} mb-4`;
+                alert.innerHTML = `
+                    <button class="delete" onclick="this.parentElement.remove()"></button>
+                    <i class="fas ${icons[type] || 'fa-info-circle'} mr-2"></i>
+                    ${message}
+                `;
+
+                this.alertContainer.innerHTML = '';
+                this.alertContainer.appendChild(alert);
+
+                // Auto remove after 5 seconds for success messages
+                if (type === 'success') {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, 5000);
+                }
+
+                // Scroll to alert
+                alert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            async loadSKUs() {
+                try {
+                    this.showLoading('Loading SKU list...');
+                    
+                    const response = await fetch(`${SCRIPT_URL}?action=getSKUList`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Clear existing options
+                    this.skuSelect.innerHTML = '<option value="">Select a SKU</option>';
+                    
+                    // Add SKU options
+                    if (data.length === 0) {
+                        this.skuSelect.innerHTML = '<option value="">No SKUs available</option>';
+                        this.showAlert('No SKUs found in the system.', 'warning');
+                    } else {
+                        data.forEach(sku => {
+                            const option = document.createElement('option');
+                            option.value = sku;
+                            option.textContent = sku;
+                            this.skuSelect.appendChild(option);
+                        });
+                        
+                        this.showAlert(`${data.length} SKUs loaded successfully.`, 'success');
+                    }
+
+                } catch (error) {
+                    console.error('Error loading SKUs:', error);
+                    this.skuSelect.innerHTML = '<option value="">Error loading SKUs</option>';
+                    this.showAlert(`Failed to load SKUs: ${error.message}`, 'error');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                if (!this.validateForm()) {
+                    return;
+                }
+
+                const formData = {
+                    sku: document.getElementById('skuSelect').value,
+                    inOut: document.getElementById('transactionType').value,
+                    date: document.getElementById('entryDate').value,
+                    quantity: parseFloat(document.getElementById('quantity').value)
+                };
+
+                try {
+                    this.showLoading('Submitting entry...');
+                    
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: 'submitForm',
+                            data: formData
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.error) {
+                        throw new Error(result.error);
+                    }
+
+                    this.showAlert('Entry submitted successfully! 🎉', 'success');
+                    this.resetForm();
+                    this.loadStats(); // Refresh stats after submission
+
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    this.showAlert(`Failed to submit entry: ${error.message}`, 'error');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            validateForm() {
+                let isValid = true;
+                const fields = [
+                    { id: 'skuSelect', name: 'SKU' },
+                    { id: 'transactionType', name: 'Transaction Type' },
+                    { id: 'entryDate', name: 'Date' },
+                    { id: 'quantity', name: 'Quantity' }
+                ];
+
+                fields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    if (!this.validateField(element)) {
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            }
+
+            validateField(field) {
+                const value = field.value.trim();
+                let isValid = true;
+                let errorMessage = '';
+
+                // Remove existing error styling
+                field.classList.remove('is-danger');
+                
+                // Required field validation
+                if (!value) {
+                    isValid = false;
+                    errorMessage = `${field.previousElementSibling.textContent} is required`;
+                }
+
+                // Specific validations
+                switch (field.id) {
+                    case 'quantity':
+                        if (value && (isNaN(value) || parseFloat(value) <= 0)) {
+                            isValid = false;
+                            errorMessage = 'Quantity must be a positive number';
+                        }
+                        break;
+                    case 'entryDate':
+                        if (value && isNaN(Date.parse(value))) {
+                            isValid = false;
+                            errorMessage = 'Please enter a valid date';
+                        }
+                        break;
+                }
+
+                if (!isValid) {
+                    field.classList.add('is-danger');
+                    this.showFieldError(field, errorMessage);
+                } else {
+                    field.classList.remove('is-danger');
+                    this.clearFieldError(field);
+                }
+
+                return isValid;
+            }
+
+            showFieldError(field, message) {
+                // Remove existing error message
+                this.clearFieldError(field);
+                
+                // Add error message
+                const errorDiv = document.createElement('p');
+                errorDiv.className = 'help is-danger field-error';
+                errorDiv.textContent = message;
+                field.parentElement.appendChild(errorDiv);
+            }
+
+            clearFieldError(field) {
+                const errorElement = field.parentElement.querySelector('.field-error');
+                if (errorElement) {
+                    errorElement.remove();
+                }
+                field.classList.remove('is-danger');
+            }
+
+            resetForm() {
+                this.form.reset();
+                this.setDefaultDate();
+                this.alertContainer.innerHTML = '';
+                
+                // Clear all field errors
+                const fields = this.form.querySelectorAll('input, select');
+                fields.forEach(field => {
+                    this.clearFieldError(field);
+                });
+
+                this.showAlert('Form has been reset.', 'info');
+            }
+
+            setDefaultDate() {
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                document.getElementById('entryDate').value = formattedDate;
+            }
+
+            async loadStats() {
+                try {
+                    const response = await fetch(`${SCRIPT_URL}?action=getFormStats`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const stats = await response.json();
+                    
+                    if (!stats.error && stats.totalEntries !== undefined) {
+                        this.displayStats(stats);
+                    }
+
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+
+            displayStats(stats) {
+                const statsContainer = document.getElementById('statsContainer');
+                const statsContent = document.getElementById('statsContent');
+                
+                let lastEntryText = 'No entries yet';
+                if (stats.lastEntry) {
+                    const lastDate = new Date(stats.lastEntry.timestamp);
+                    lastEntryText = `${stats.lastEntry.sku} - ${stats.lastEntry.transactionType} (${lastDate.toLocaleDateString()})`;
+                }
+
+                statsContent.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <div class="has-text-weight-semibold">Total Entries</div>
+                            <div class="has-text-grey">${stats.totalEntries}</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="has-text-weight-semibold">Last Entry</div>
+                            <div class="has-text-grey">${lastEntryText}</div>
+                        </div>
+                    </div>
+                `;
+
+                statsContainer.style.display = 'block';
+            }
+        }
+
+        // Initialize the form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new IMSEntryForm();
+        });
+
+        // Service Worker for PWA capabilities (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // You can register a service worker here for offline functionality
+                console.log('Service Worker support detected');
+            });
+        }
+
+        // Add touch feedback for mobile devices
+        if ('ontouchstart' in window) {
+            document.body.addEventListener('touchstart', function() {}, {passive: true});
+        }
+    </script>
+</body>
+</html>
